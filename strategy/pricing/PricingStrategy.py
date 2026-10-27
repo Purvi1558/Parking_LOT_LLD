@@ -9,3 +9,12 @@ public interface PricingStrategy {
     double calculateFee(VehicleType type, LocalDateTime entryTime, LocalDateTime exitTime);
 }
 """
+from abc import ABC
+from ..enums.VehicleType import VehicleType
+from datetime import datetime
+
+class PricingStrategy(ABC):
+    @abstractmethod 
+    def calculateFee(self, type: VehicleType, entryTime: datetime, exitTime: datetime) -> float:
+        pass
+    

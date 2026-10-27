@@ -53,3 +53,28 @@ public class TimeBasedPricing implements PricingStrategy {
     }
 }
 """
+class TimeBasedPricing(PricingStrategy):
+    PEAK_START = LocalTime.of(8, 0)
+    PEAK_END = LocalTime.of(17, 0)
+    def calculateFee(self, type: VehicleType, entryTime: datetime, exitTime: datetime) -> float:
+        durationMinutes = (exitTime - entryTime).total_seconds() / 60
+        totalHours = ceil(durationMinutes / 60.0)
+        peakHours = 0
+        nonPeakHours = 0
+        cursor = entryTime.truncatedTo(ChronoUnit.HOURS)
+        for i in range(totalHours):
+            hourStart = cursor.toLocalTime()
+            if hourStart >= self.PEAK_START and hourStart <= self.PEAK_END:
+                peakHours += 1
+            else:
+                nonPeakHours += 1
+            cursor = cursor.plusHours(1)
+        peakRate = switch (type):
+            case VehicleType.CAR -> 30.0;
+            case VehicleType.BIKE -> 15.0;
+            case VehicleType.TRUCK -> 50.0;
+        nonPeakRate = switch (type):
+            case VehicleType.CAR -> 20.0;
+            case VehicleType.BIKE -> 10.0;
+            case VehicleType.TRUCK -> 30.0;
+        return peakHours * peakRate + nonPeakHours * nonPeakRate
