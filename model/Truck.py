@@ -8,7 +8,7 @@ public class Truck extends Vehicle {
 }
 """
 from .Vehicle import Vehicle
-from ..enums import VehicleType
+from ..enums.VehicleType import VehicleType
 
 class Truck(Vehicle):
     def __init__(self, number: str):

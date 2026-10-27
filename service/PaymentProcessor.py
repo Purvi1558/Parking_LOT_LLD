@@ -27,6 +27,7 @@ public class PaymentProcessor {
 
 from ..model.Ticket import Ticket
 from ..enums.PaymentStatus import PaymentStatus
+from ..strategy.payment.PaymentStrategy import PaymentStrategy
 
 class PaymentProcessor:
     def __init__(self, strategy: PaymentStrategy):

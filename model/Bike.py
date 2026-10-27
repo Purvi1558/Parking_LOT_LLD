@@ -1,5 +1,5 @@
 from .Vehicle import Vehicle
-from ..enums import VehicleType
+from ..enums.VehicleType import VehicleType
 
 class Bike(Vehicle):
     def __init__(self, number: str):

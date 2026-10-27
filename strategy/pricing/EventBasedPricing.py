@@ -27,7 +27,7 @@ public class EventBasedPricing implements PricingStrategy {
 """
 from typing import Optional
 from .PricingStrategy import PricingStrategy
-from ..enums.VehicleType import VehicleType
+from ...enums.VehicleType import VehicleType
 from datetime import datetime
 from math import ceil
 

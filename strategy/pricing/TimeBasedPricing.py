@@ -53,28 +53,48 @@ public class TimeBasedPricing implements PricingStrategy {
     }
 }
 """
+from datetime import datetime, time, timedelta
+from math import ceil
+from .PricingStrategy import PricingStrategy
+from ...enums.VehicleType import VehicleType
+
+
 class TimeBasedPricing(PricingStrategy):
-    PEAK_START = LocalTime.of(8, 0)
-    PEAK_END = LocalTime.of(17, 0)
+    PEAK_START = time(8, 0)
+    PEAK_END = time(17, 0)
+
+    PEAK_RATES = {
+        VehicleType.CAR: 30.0,
+        VehicleType.BIKE: 15.0,
+        VehicleType.TRUCK: 50.0,
+    }
+
+    NON_PEAK_RATES = {
+        VehicleType.CAR: 20.0,
+        VehicleType.BIKE: 10.0,
+        VehicleType.TRUCK: 30.0,
+    }
+
     def calculateFee(self, type: VehicleType, entryTime: datetime, exitTime: datetime) -> float:
+        if exitTime < entryTime:
+            raise ValueError("Exit time before entry time")
+
         durationMinutes = (exitTime - entryTime).total_seconds() / 60
-        totalHours = ceil(durationMinutes / 60.0)
+        totalHours = int(ceil(durationMinutes / 60.0))
+
         peakHours = 0
         nonPeakHours = 0
-        cursor = entryTime.truncatedTo(ChronoUnit.HOURS)
+        cursor = entryTime.replace(minute=0, second=0, microsecond=0)
+
         for i in range(totalHours):
-            hourStart = cursor.toLocalTime()
-            if hourStart >= self.PEAK_START and hourStart <= self.PEAK_END:
+            hourStart = cursor.time()
+            if self.PEAK_START <= hourStart <= self.PEAK_END:
                 peakHours += 1
             else:
                 nonPeakHours += 1
-            cursor = cursor.plusHours(1)
-        peakRate = switch (type):
-            case VehicleType.CAR -> 30.0;
-            case VehicleType.BIKE -> 15.0;
-            case VehicleType.TRUCK -> 50.0;
-        nonPeakRate = switch (type):
-            case VehicleType.CAR -> 20.0;
-            case VehicleType.BIKE -> 10.0;
-            case VehicleType.TRUCK -> 30.0;
+            cursor += timedelta(hours=1)
+
+        peakRate = self.PEAK_RATES.get(type, 0.0)
+        nonPeakRate = self.NON_PEAK_RATES.get(type, 0.0)
+
         return peakHours * peakRate + nonPeakHours * nonPeakRate

@@ -56,3 +56,9 @@ class ParkingSpot:
 
     def isOccupied(self) -> bool:
         return self.occupied
+
+    def getAllowedType(self) -> VehicleType:
+        return self.allowedType
+
+    def getId(self) -> str:
+        return self.id

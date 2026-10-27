@@ -47,5 +47,9 @@ class ParkingFloor:
             if spot.getAllowedType() == vehicleType and spot.tryOccupy():
                 return spot
         return None
-    
-    
+
+    def getId(self) -> str:
+        return self.id
+
+    def getSpots(self) -> dict:
+        return self.spots
